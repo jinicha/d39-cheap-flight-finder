@@ -9,21 +9,22 @@ TOKEN = config.TOKEN
 
 base_url = "https://api.sheety.co/1535b87ed86e1f83ec9c3d5640e64173/flightDeals/prices/"
 
-sheet_data = DataManager()
-data = sheet_data.get_sheety_data()
-test = FlightSearch()
+sheet_data = DataManager().get_sheety_data()
+flight_search = FlightSearch()
 
-sheety_header = {
+sheety_headers = {
     "Authorization": f'Bearer {TOKEN}',
     "Content-type": "application/json"
 }
-for item in data:
-    if not item["iataCode"]:
-        city_id = item["id"]
+
+for data in sheet_data:
+    if not data["iataCode"]:
+        city_name = data["city"]
+        city_id = str(data["id"])
         body = {
             "price": {
-                "iataCode": test.test()
+                "iataCode": flight_search.get_iata_code(city_name)
             }
         }
 
-        requests.put(url=base_url + city_id, headers=sheety_header, json=body)
+        requests.put(url=base_url + city_id, headers=sheety_headers, json=body)
